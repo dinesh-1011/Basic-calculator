@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .calculator {
+            background: #222;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            width: 320px;
+        }
+        .display {
+            background: #111;
+            color: #fff;
+            font-size: 2rem;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            text-align: right;
+            min-height: 48px;
+            overflow-x: auto;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        button {
+            padding: 18px 0;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #444;
+        }
+        .operator {
+            background: #ff9800;
+            color: #fff;
+        }
+        .operator:hover {
+            background: #e68900;
+        }
+        .clear {
+            background: #e53935;
+        }
+        .clear:hover {
+            background: #b71c1c;
+        }
+        .equals {
+            background: #43a047;
+        }
+        .equals:hover {
+            background: #2e7031;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <div class="buttons">
+            <button onclick="press('7')">7</button>
+            <button onclick="press('8')">8</button>
+            <button onclick="press('9')">9</button>
+            <button class="operator" onclick="press('/')">÷</button>
+
+            <button onclick="press('4')">4</button>
+            <button onclick="press('5')">5</button>
+            <button onclick="press('6')">6</button>
+            <button class="operator" onclick="press('*')">×</button>
+
+            <button onclick="press('1')">1</button>
+            <button onclick="press('2')">2</button>
+            <button onclick="press('3')">3</button>
+            <button class="operator" onclick="press('-')">−</button>
+
+            <button onclick="press('0')">0</button>
+            <button onclick="press('.')">.</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="press('+')">+</button>
+
+            <button class="equals" style="grid-column: span 4;" onclick="calculate()">=</button>
+        </div>
+    </div>
+    <script>
+        let current = '';
+        let resultDisplayed = false;
+        const display = document.getElementById('display');
+
+        function press(val) {
+            if (resultDisplayed) {
+                if (/[0-9.]/.test(val)) {
+                    current = '';
+                }
+                resultDisplayed = false;
+            }
+            if (val === '.' && current.split(/\+|\-|\*|\//).pop().includes('.')) return;
+            current += val;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            display.textContent = current || '0';
+            // Real-time result display
+            try {
+                if (/^[0-9.\+\-\*\/]+$/.test(current) && /[\+\-\*\/]/.test(current)) {
+                    let evalResult = eval(current.replace(/\.{2,}/g, '.'));
+                    if (!isNaN(evalResult)) {
+                        display.textContent += '\n= ' + evalResult;
+                    }
+                }
+            } catch {}
+        }
+
+        function clearDisplay() {
+            current = '';
+            resultDisplayed = false;
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                let evalResult = eval(current.replace(/\.{2,}/g, '.'));
+                if (!isNaN(evalResult)) {
+                    display.textContent = evalResult;
+                    current = evalResult.toString();
+                    resultDisplayed = true;
+                }
+            } catch {
+                display.textContent = 'Error';
+                current = '';
+                resultDisplayed = true;
+            }
+        }
+    </script>
+</body>
+</html>
